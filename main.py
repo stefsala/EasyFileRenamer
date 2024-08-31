@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog, messagebox
 import os
 import time
-from shutil import copy
+from shutil import copy, copy2
 from pathlib import Path
 
 VERSION = "0.2.0"
@@ -121,7 +121,7 @@ class MainApp(tk.Tk):
                 ctime_str = time.strftime("%Y-%m-%d_%H-%M-%S",time.strptime(c_time))
 
                 #Compongo il nome del file
-                copy(individual_file.path,f"{dest_path}/{new_name}_{ctime_str}{Path(individual_file.path).suffix}")
+                copy2(individual_file.path,f"{dest_path}/{new_name}_{ctime_str}{Path(individual_file.path).suffix}")
                 self.completion_count.set(i+1)
                 self.progressbar.update()
 
