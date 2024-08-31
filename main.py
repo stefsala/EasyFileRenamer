@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 import os
-from shutil import copy
+import time
+from shutil import copy, copy2
 from pathlib import Path
 
 VERSION = "0.2.0"
@@ -46,7 +47,7 @@ class MainApp(tk.Tk):
         file_listbox = tk.Listbox(top_frame,listvariable=self.file_list_variable, height=10, bg="white",fg="black")
         file_sb = ttk.Scrollbar(top_frame, orient=tk.VERTICAL, command=file_listbox.yview)
         file_listbox['yscrollcommand'] = file_sb.set
-        file_sb.grid(row=2, column=9, sticky=tk.NE+tk.SE)
+        file_sb.grid(row=2, column=9, rowspan=9, sticky=tk.NE+tk.SE)
         file_listbox.grid(row=2, column=0,columnspan=9,rowspan=8, sticky=tk.W+tk.E, padx=2)
 
         separator = ttk.Separator(top_frame,orient=tk.VERTICAL)
@@ -60,7 +61,7 @@ class MainApp(tk.Tk):
         dest_field = tk.Entry(top_frame, background="white", fg="black", textvariable=self.dest_path)
         dest_field.grid(row=1, column=11, columnspan=8, sticky=tk.W+tk.E+tk.N)
         #Button Browse destinazione
-        dest_btn = tk.Button(top_frame, text=">>", command= lambda: self.browse_destination()) #!!! Command
+        dest_btn = tk.Button(top_frame, text=">>", command= lambda: self.browse_destination())
         dest_btn.grid(row=1,column=19, sticky=tk.E+tk.N+tk.S)
         
 
@@ -110,8 +111,17 @@ class MainApp(tk.Tk):
                 #Se la cartella di destinazione dei file non esiste, la creo
                 if Path(dest_path).is_dir() is False:
                     os.mkdir(dest_path)
-                #Copio il file in una cartella apposita, aggiungendo il valore di i+1 al nome e mantenendo l'estensione grazie a Path().suffix
-                copy(individual_file.path,f"{dest_path}/{new_name}_{i+1}{Path(individual_file.path).suffix}")
+
+                #Copio il file in una cartella apposita mantenendo l'estensione grazie a Path().suffix
+                #Aggiungo al nome del file la data di creazione
+
+                #Acquisisco data di creazione come float
+                c_time = time.ctime(os.path.getctime(individual_file.path))
+                #Formatto la data
+                ctime_str = time.strftime("%Y-%m-%d_%H-%M-%S",time.strptime(c_time))
+
+                #Compongo il nome del file
+                copy2(individual_file.path,f"{dest_path}/{new_name}_{ctime_str}{Path(individual_file.path).suffix}")
                 self.completion_count.set(i+1)
                 self.progressbar.update()
 

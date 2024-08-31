@@ -23,3 +23,4 @@ Questa è una versione senza controlli né gestione eccezioni, che però è pres
 Sostanzialmente, dati in input `dir_path` e `destination_path`, ovvero le cartelle di orgine e destinazione, ogni file presente nella cartella di origine viene copiato al path desiderato con un nuovo nome, formato dall'argomento `file_name` + un valore progressivo (`i`) + l'estensione del file di origine (ricavata dall'attributo `.suffix`).
 
 Tutto il resto dello script si occupa dell'interfaccia grafica, creata con Tkinter.
+![Screenshot Interfaccia](EasyFileRenamer_0.1.0.png)
