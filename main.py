@@ -10,7 +10,6 @@ VERSION = "0.2.0"
     
 class MainApp(tk.Tk):
 
-    folder_path = ""
     file_list = []
     kill_process = False #Variabile di controllo per interrompere processo di copia
     
@@ -26,56 +25,73 @@ class MainApp(tk.Tk):
         self.max_count = tk.IntVar()
 
         master.title(f"Easy File Renamer {VERSION}")
-        master.geometry("600x400")
+        master.geometry("550x330")
+        master.resizable(0,0)
 
+        icon_big = tk.PhotoImage(file="./EFR_Icon_256.png")
+        icon_small = tk.PhotoImage(file="./EFR_Icon_64.png")
+        master.iconphoto(False,icon_big,icon_small)
+
+        title_label = tk.Label(master, text="Easy File Renamer", font="Arial 20")
+        title_label.grid(row=0, column=0, sticky=tk.SW, padx=15, pady=5)
         #Frame Principale
-        top_frame = tk.Frame(master, padx=10, pady=10)
-        top_frame.grid(row=0, column=0, columnspan=7, padx=5,pady=5)
+        main_frame = tk.Frame(master, padx=10)
+        main_frame.grid(row=1, column=0, padx=5)
 
         #Label cartella sorgente 0x0
-        dir_label = tk.Label(top_frame,text="Cartella sorgente:", font="Arial 14")
+        dir_label = tk.Label(main_frame,text="Cartella sorgente:", font="Arial 14")
         dir_label.grid(row=0,column=0, sticky=tk.W)
         
         #Entry per Path Sorgente 1x0 -> 1x8
-        path_field = tk.Entry(top_frame,background="white",fg="black", textvariable=self.folder_path)
-        path_field.grid(row=1,column=0, columnspan=8, sticky=tk.W+tk.E)
+        path_field = tk.Entry(main_frame,background="white",fg="black", textvariable=self.folder_path)
+        path_field.grid(row=1,column=0, sticky=tk.W+tk.E)
         #Button per finestra Directory selector (con call funzione in lambda)
-        path_btn = tk.Button(top_frame, text="...",command = lambda: self.browse_directories()) #Lambda perché altrimenti funzione partiva all'avvio
-        path_btn.grid(row=1, column=8, sticky=tk.E+tk.N+tk.S)
+        path_btn = tk.Button(main_frame, text="...",command = lambda: self.browse_directories()) #Lambda perché altrimenti funzione partiva all'avvio
+        path_btn.grid(row=1, column=1, sticky=tk.E)
 
         #Listbox dei file presenti + scroll bar 2x0 -> 2x9
-        file_listbox = tk.Listbox(top_frame,listvariable=self.file_list_variable, height=10, bg="white",fg="black")
-        file_sb = ttk.Scrollbar(top_frame, orient=tk.VERTICAL, command=file_listbox.yview)
+        file_listbox = tk.Listbox(main_frame,listvariable=self.file_list_variable, height=10, bg="white",fg="black")
+        file_sb = ttk.Scrollbar(main_frame, orient=tk.VERTICAL, command=file_listbox.yview)
         file_listbox['yscrollcommand'] = file_sb.set
-        file_sb.grid(row=2, column=9, rowspan=9, sticky=tk.NE+tk.SE)
-        file_listbox.grid(row=2, column=0,columnspan=9,rowspan=8, sticky=tk.W+tk.E, padx=2)
+        file_sb.grid(row=3, column=2, rowspan=4, sticky=tk.NE+tk.SE)
+        file_listbox.grid(row=3, column=0,columnspan=2, rowspan=4, sticky=tk.NSEW, padx=2)
 
-        separator = ttk.Separator(top_frame,orient=tk.VERTICAL)
-        separator.grid(row=1, column=10, rowspan=8, ipady=100, padx=10, pady=3, sticky=tk.N+tk.S)
+        #Separatore tra lato dx e sx
+        separator = ttk.Separator(main_frame,orient=tk.VERTICAL)
+        separator.grid(row=0, column=3, rowspan=11, ipady=125, padx=10, pady=5, sticky=tk.N+tk.S)
 
-        #Label cartella destinazione 0x11
-        dest_label = tk.Label(top_frame, text="Cartella destinazione:", font="Arial 14")
-        dest_label.grid(row=0, column=11, sticky=tk.W)
+        #Label cartella destinazione 
+        dest_label = tk.Label(main_frame, text="Cartella destinazione:", font="Arial 14")
+        dest_label.grid(row=0, column=4, sticky=tk.W)
 
-        #Entry Path Destinazione 1x11 -> 1x19
-        dest_field = tk.Entry(top_frame, background="white", fg="black", textvariable=self.dest_path)
-        dest_field.grid(row=1, column=11, columnspan=8, sticky=tk.W+tk.E+tk.N)
+        #Entry Path Destinazione
+        dest_field = tk.Entry(main_frame, background="white", fg="black", textvariable=self.dest_path)
+        dest_field.grid(row=1, column=4, sticky=tk.W+tk.E)
         #Button Browse destinazione
-        dest_btn = tk.Button(top_frame, text=">>", command= lambda: self.browse_destination())
-        dest_btn.grid(row=1,column=19, sticky=tk.E+tk.N+tk.S)
+        dest_btn = tk.Button(main_frame, text=">>", command= lambda: self.browse_destination())
+        dest_btn.grid(row=1,column=5, sticky=tk.E)
         
+        main_frame.grid_rowconfigure(3,minsize=100) #Spazios
 
-        name_label = tk.Label(top_frame, text="Il nome da dare ai file:", font="Arial 14")
-        name_label.grid(row=2, column=11, sticky=tk.W+tk.N)
+        #Label nuovo nome file
+        name_label = tk.Label(main_frame, text="Il nome da dare ai file:", font="Arial 14")
+        name_label.grid(row=4, column=4, sticky=tk.W+tk.N)
+        #Entry nuovo nome file
+        name_field = tk.Entry(main_frame, background="white", fg="black",textvariable=self.new_name)
+        name_field.grid(row=5, column=4,columnspan=2, sticky=tk.W+tk.E+tk.N)
+        #Button funzione sposta_files()
+        rename_btn = tk.Button(main_frame,text="Copia", command= lambda: self.sposta_files(self.folder_path.get(), self.dest_path.get(), self.new_name.get()))
+        rename_btn.grid(row=6, column=4, columnspan=2, sticky=tk.W+tk.E+tk.S+tk.N)
 
-        name_field = tk.Entry(top_frame, background="white", fg="black",textvariable=self.new_name)
-        name_field.grid(row=3, column=11, columnspan=9, sticky=tk.W+tk.E)
+        #Progress Bar
+        self.progressbar = ttk.Progressbar(master, variable=self.completion_count, orient=tk.HORIZONTAL, mode="determinate")
+        self.progressbar.grid(row=2, column=0, sticky=tk.W+tk.S+tk.E, padx=10, ipady=10)
 
-        rename_btn = tk.Button(top_frame,text="Copia", command= lambda: self.sposta_files(self.folder_path.get(), self.dest_path.get(), self.new_name.get()))
-        rename_btn.grid(row=4, column=11, columnspan=9, sticky=tk.W+tk.E)
 
-        self.progressbar = ttk.Progressbar(top_frame, variable=self.completion_count, orient=tk.HORIZONTAL, mode="determinate")
-        self.progressbar.grid(row=5, column=11, columnspan=9, sticky=tk.E+tk.W)
+        #main_frame.grid_rowconfigure(list(range(0,4)), minsize=20, pad=0, weight = 1)
+        #main_frame.grid_columnconfigure(list(range(0,20)), minsize=5)
+
+
     
     def browse_directories(self) -> None:
         #!!! Focus issue con filedialog.askdirectory()
