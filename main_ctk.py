@@ -1,6 +1,5 @@
-import customtkinter
 import tkinter as tk
-from tkinter import ttk
+import customtkinter
 from tkinter import filedialog, messagebox
 import os
 import time
