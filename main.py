@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog, messagebox
 import os
 import time
-from shutil import copy, copy2
+from shutil import copy2
 from pathlib import Path
 
 VERSION = "0.2.0"
@@ -14,7 +14,8 @@ class MainApp(tk.Tk):
     kill_process = False #Variabile di controllo per interrompere processo di copia
     
     def __init__(self, master):
-        self.master = master
+        super().__init__()
+        #self.master = master
 
         # StringVar sono utilizzati come textvariable in label ed affini per cambiare dinamicamente il contenuto delle stesse
         self.folder_path = tk.StringVar() #Testo per la entry riguardante il path di origine
@@ -146,11 +147,6 @@ class MainApp(tk.Tk):
         except Exception as e:
             messagebox.showerror("Errore",str(e))
 
-    def sposta_files_worker(self,folder_path, dest_path, new_name) -> None:
-        pass
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = MainApp(root)
-    root.mainloop()
-    
+    pass
